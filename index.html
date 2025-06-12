@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Quejas y Sugerencias</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>Formulario de Quejas y Sugerencias</h1>
+  <form id="formQueja">
+    <input type="text" id="nombre" placeholder="Nombre" required>
+    <input type="email" id="email" placeholder="Correo" required>
+    <textarea id="mensaje" placeholder="Escribe tu queja o sugerencia" required></textarea>
+    <input type="text" id="etiquetas" placeholder="Etiquetas (separadas por coma)">
+    <button type="submit">Enviar</button>
+  </form>
+
+  <div id="listaQuejas"></div>
+
+  <script type="module" src="script.js"></script>
+</body>
+</html>
