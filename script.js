@@ -3,12 +3,10 @@ import {
   collection, addDoc, getDocs, doc, deleteDoc, updateDoc
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-// Colección de artículos
 const articulosRef = collection(db, "articulos");
 
 const formArticulo = document.getElementById("formArticulo");
 
-// Crear artículo
 formArticulo.addEventListener("submit", async (e) => {
   e.preventDefault();
 
@@ -25,7 +23,6 @@ formArticulo.addEventListener("submit", async (e) => {
   mostrarArticulos();
 });
 
-// Mostrar artículos
 async function mostrarArticulos() {
   const contenedor = document.getElementById("listaArticulos");
   contenedor.innerHTML = "";
@@ -67,7 +64,6 @@ async function mostrarArticulos() {
   });
 }
 
-// Agregar comentario
 window.agregarComentario = async (id) => {
   const nombre = document.getElementById(`nombre-${id}`).value;
   const texto = document.getElementById(`comentario-${id}`).value;
