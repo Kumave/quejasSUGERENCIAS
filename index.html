@@ -2,20 +2,27 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Quejas y Sugerencias</title>
+  <title>Mi Blog Personal</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>Formulario de Quejas y Sugerencias</h1>
-  <form id="formQueja">
-    <input type="text" id="nombre" placeholder="Nombre" required>
-    <input type="email" id="email" placeholder="Correo" required>
-    <textarea id="mensaje" placeholder="Escribe tu queja o sugerencia" required></textarea>
-    <input type="text" id="etiquetas" placeholder="Etiquetas (separadas por coma)">
-    <button type="submit">Enviar</button>
+
+  <h1>Mi Blog Personal</h1>
+
+  <!-- FORMULARIO PARA PUBLICAR ARTÍCULOS -->
+  <h2>Publicar nuevo artículo</h2>
+  <form id="formArticulo">
+    <input type="text" id="titulo" placeholder="Título del artículo" required>
+    <textarea id="contenido" placeholder="Contenido del artículo" required></textarea>
+    <input type="text" id="autor" placeholder="Tu nombre" required>
+    <button type="submit">Publicar</button>
   </form>
 
-  <div id="listaQuejas"></div>
+  <hr>
+
+  <!-- LISTA DE ARTÍCULOS -->
+  <h2>Artículos publicados</h2>
+  <div id="listaArticulos"></div>
 
   <script type="module" src="script.js"></script>
 </body>
