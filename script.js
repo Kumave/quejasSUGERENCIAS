@@ -3,71 +3,91 @@ import {
   collection, addDoc, getDocs, doc, deleteDoc, updateDoc
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-const quejasRef = collection(db, "quejas");
-const form = document.getElementById("formQueja");
+// Colección de artículos
+const articulosRef = collection(db, "articulos");
 
-let editando = false;
-let idActual = "";
+const formArticulo = document.getElementById("formArticulo");
 
-form.addEventListener("submit", async (e) => {
+// Crear artículo
+formArticulo.addEventListener("submit", async (e) => {
   e.preventDefault();
 
-  const queja = {
-    mensaje: form.mensaje.value,
-    etiquetas: form.etiquetas.value.split(",").map(e => e.trim()),
-    usuario: {
-      nombre: form.nombre.value,
-      email: form.email.value
-    }
+  const articulo = {
+    titulo: formArticulo.titulo.value,
+    contenido: formArticulo.contenido.value,
+    autor: formArticulo.autor.value,
+    fecha: new Date().toLocaleString(),
+    comentarios: []
   };
 
-  if (editando) {
-    await updateDoc(doc(db, "quejas", idActual), queja);
-    editando = false;
-    idActual = "";
-    form.querySelector("button").textContent = "Enviar";
-  } else {
-    await addDoc(quejasRef, queja);
-  }
-
-  form.reset();
-  mostrarQuejas();
+  await addDoc(articulosRef, articulo);
+  formArticulo.reset();
+  mostrarArticulos();
 });
 
-async function mostrarQuejas() {
-  const contenedor = document.getElementById("listaQuejas");
+// Mostrar artículos
+async function mostrarArticulos() {
+  const contenedor = document.getElementById("listaArticulos");
   contenedor.innerHTML = "";
-  const snapshot = await getDocs(quejasRef);
+
+  const snapshot = await getDocs(articulosRef);
 
   snapshot.forEach((docu) => {
     const data = docu.data();
+
     const div = document.createElement("div");
-    div.className = "card";
+    div.className = "articulo";
+
     div.innerHTML = `
-      <h3>${data.usuario.nombre}</h3>
-      <p><strong>Email:</strong> ${data.usuario.email}</p>
-      <p><strong>Mensaje:</strong> ${data.mensaje}</p>
-      <p><strong>Etiquetas:</strong> ${data.etiquetas.join(", ")}</p>
-      <button onclick="editar('${docu.id}', ${JSON.stringify(data).replace(/"/g, '&quot;')})">Editar</button>
-      <button onclick="eliminar('${docu.id}')">Eliminar</button>
+      <h3>${data.titulo}</h3>
+      <p><em>Por ${data.autor} | ${data.fecha}</em></p>
+      <p>${data.contenido}</p>
+
+      <h4>Comentarios</h4>
+      <div class="comentarios">
+        ${
+          data.comentarios.length === 0
+          ? "<p class='no-com'>No hay comentarios aún</p>"
+          : data.comentarios.map(c => `
+              <div class='comentario'>
+                <strong>${c.nombre}:</strong> ${c.texto}
+              </div>
+            `).join("")
+        }
+      </div>
+
+      <div class="formComentario">
+        <input type="text" placeholder="Tu nombre" id="nombre-${docu.id}">
+        <input type="text" placeholder="Escribe un comentario" id="comentario-${docu.id}">
+        <button onclick="agregarComentario('${docu.id}')">Comentar</button>
+      </div>
     `;
+
     contenedor.appendChild(div);
   });
 }
 
-window.editar = (id, datos) => {
-  form.nombre.value = datos.usuario.nombre;
-  form.email.value = datos.usuario.email;
-  form.mensaje.value = datos.mensaje;
-  form.etiquetas.value = datos.etiquetas.join(", ");
-  idActual = id;
-  editando = true;
-  form.querySelector("button").textContent = "Actualizar";
+// Agregar comentario
+window.agregarComentario = async (id) => {
+  const nombre = document.getElementById(`nombre-${id}`).value;
+  const texto = document.getElementById(`comentario-${id}`).value;
+
+  if (!nombre || !texto) return alert("Debes escribir nombre y comentario.");
+
+  const articuloDoc = doc(db, "articulos", id);
+  const snapshot = await getDocs(articulosRef);
+
+  let articulo;
+  snapshot.forEach((d) => {
+    if (d.id === id) articulo = d.data();
+  });
+
+  articulo.comentarios.push({ nombre, texto });
+
+  await updateDoc(articuloDoc, articulo);
+
+  mostrarArticulos();
 };
 
-window.eliminar = async (id) => {
-  await deleteDoc(doc(db, "quejas", id));
-  mostrarQuejas();
-};
+mostrarArticulos();
 
-mostrarQuejas();
